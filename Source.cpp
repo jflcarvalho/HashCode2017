@@ -46,7 +46,7 @@ public:
 	vector<Video> getVideos() {
 		return videos;
 	}
-	void addVideo(Video video) {
+	void addVideo(Video &video) {
 		videos.push_back(video);
 		actualSize -= video.size;
 	}
@@ -143,7 +143,7 @@ public:
 	}
 	void addVideosToCaches() {
 		for (int k = 0; k < caches.size(); k++) {
-			while (videoRequests.size() >= 0 && caches.at(k).cache->getActualSize() > videoRequests.at(0).videoRequest.size) {
+			while (videoRequests.size() > 0 && caches.at(k).cache->getActualSize() >= videoRequests.at(0).videoRequest.size) {
 				caches.at(k).cache->addVideo(videoRequests.at(0).videoRequest);
 				videoRequests.erase(videoRequests.begin());
 			}
