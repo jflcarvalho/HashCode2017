@@ -173,29 +173,3 @@ int main() {
 
 	return 0;
 }
-
-			getline(inFile, line);
-			sstream << line;
-			sstream >> videosNumber;
-			sstream >> endpointsNumber;
-			sstream >> requestNumber;
-			sstream >> cacheNumber;
-			sstream >> cacheSize;
-			for (int i = 0; i < cacheNumber; i++)
-			{
-				Cache newCache(cacheSize);
-				caches.push_back(newCache);
-bool compareCaches(const CacheAndLatency& lhs, const CacheAndLatency&rhs)
-{
-	if (lhs.latencyToEndp < rhs.latencyToEndp) {
-		return true;
-	}
-	return false;
-	vector<CacheAndLatency> caches;
-	int dataCenterLatency;
-		CacheAndLatency a;
-		for (int i = 0; i < caches.size(); i++) {
-			a.cache = &caches.at(i);
-			a.latencyToEndp = endPointToCachesLatency.at(i);
-			this->caches.push_back(a);
-
