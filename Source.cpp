@@ -300,7 +300,7 @@ void readDataSets(string nameFile, vector<EndPoint> &endPoints, vector<Cache> &c
 	}
 }
 int main() {
-	string filename = "videos_worth_spreading.in";
+	string filename = "me_at_the_zoo.in";
 	vector<EndPoint> endPoints;
 	vector<Cache> caches;
 	readDataSets(filename, endPoints,caches);
