@@ -76,6 +76,25 @@ private:
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
+	EndPoint();
+	void setCaches(vector<Cache> caches, vector<int> endPointToCachesLatency) {
+		CacheAndLatency a;
+		for (int i = 0; i < caches.size(); i++) {
+			a.cache = &caches.at(i);
+			a.latencyToEndp = endPointToCachesLatency.at(i);
+			this->caches.push_back(a);
+		}
+		sort(caches.begin(), caches.end(), compareCaches);
+	}
+	void setLatencyToDataCenter(int latency) {
+		dataCenterLatency = latency;
+	}
+	void setVideoRequests(vector<Request> requests) {
+		this->videoRequests = requests;
+		sort(videoRequests.begin(), videoRequests.end(), compareRequest);
+	}
+
+
 	EndPoint(vector<Cache> caches, int dataCenterLatency, vector<int> endPointToCachesLatency, vector<Request> requests) {
 		CacheAndLatency a;
 		for (int i = 0; i < caches.size(); i++) {
@@ -86,7 +105,7 @@ public:
 		sort(caches.begin(), caches.end(), compareCaches);
 		this->dataCenterLatency = dataCenterLatency;
 		this->videoRequests = requests;
-		sort(videoRequests.begin(),videoRequests.end(),compareRequest)
+		sort(videoRequests.begin(), videoRequests.end(), compareRequest);
 	}
 
 };
