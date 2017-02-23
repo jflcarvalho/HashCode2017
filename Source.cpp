@@ -36,8 +36,17 @@ void readDataSets(string nameFile) {
 	{
 		if (inFile.is_open())
 		{
-			while (getline(inFile, line))
+			getline(inFile, line);
+			sstream << line;
+			sstream >> videosNumber;
+			sstream >> endpointsNumber;
+			sstream >> requestNumber;
+			sstream >> cacheNumber;
+			sstream >> cacheSize;
+			for (int i = 0; i < cacheNumber; i++)
 			{
+				Cache newCache(cacheSize);
+				caches.push_back(newCache);
 			}
 			sstream.clear();
 			line.clear();
@@ -65,10 +74,7 @@ void readDataSets(string nameFile) {
 					newEndPoint.setLatencyToDataCenter(dataCenterLantency);
 					sstream.clear();
 					line.clear();
-					for (int j = 0; j < connectCachesNumber; j++)
-					{
-						Cache newCache(cacheSize);
-					}
+
 				}
 
 			}
