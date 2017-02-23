@@ -10,17 +10,16 @@
 using namespace std;
 
 
-
 struct Video
 {
-	unsigned ID;
-	unsigned size;
+	int ID;
+	int size;
 };
 
 struct Request
 {
 	Video videoRequest;
-	unsigned numberOfRequests;
+	int numberOfRequests;
 };
 
 
@@ -28,17 +27,18 @@ struct Request
 class Cache
 {
 private:
-	static unsigned nextID;
-	static unsigned maxSize;
-	unsigned ID;
-	unsigned actualSize;
+	static int nextID;
+	static int maxSize;
+	int ID;
+	int actualSize;
 	vector<Video> videos;
 
 public:
-	Cache(unsigned maxSize) {
+	Cache(int maxSize) {
 		this->maxSize = maxSize;
 		this->ID = nextID;
 		nextID++;
+		actualSize = maxSize;
 	}
 	int getID() {
 		return ID;
@@ -50,15 +50,14 @@ public:
 		videos.push_back(video);
 		actualSize -= video.size;
 	}
-	unsigned int getActualSize() {
+	int getActualSize() {
 		return actualSize;
 	}
-	unsigned int getMaxSize() {
+	int getMaxSize() {
 		return maxSize;
 	}
 };
-unsigned Cache::nextID = 0;
-unsigned Cache::maxSize = 0;
+
 
 struct CacheAndLatency {
 	Cache *cache;
@@ -75,15 +74,18 @@ bool compareCaches(const CacheAndLatency& lhs, const CacheAndLatency&rhs)
 
 bool compareRequest(const Request& lhs, const Request&rhs)
 {
-	return ((double)lhs.numberOfRequests / lhs.videoRequest.size < (double)rhs.numberOfRequests / rhs.videoRequest.size);
+	return ((double)lhs.numberOfRequests / lhs.videoRequest.size > (double)rhs.numberOfRequests / rhs.videoRequest.size);
 }
+
+int Cache::nextID = 0;
+int Cache::maxSize = 0;
 
 
 
 class EndPoint {
 private:
-	static unsigned nextID;
-	unsigned ID;
+	static int nextID;
+	int ID;
 	vector<CacheAndLatency> caches;
 	int dataCenterLatency;
 	vector<Request> videoRequests;
@@ -125,7 +127,7 @@ public:
 		sort(videoRequests.begin(), videoRequests.end(), compareRequest);
 	}
 
-	unsigned getID() {
+	int getID() {
 		return this->ID;
 	}
 
@@ -153,9 +155,10 @@ public:
 	}
 
 };
-unsigned  EndPoint::nextID = 0;
+int EndPoint::nextID = 0;
 
 void printResult(vector<EndPoint> &endpoints) {
+	ofstream out("a.out");
 	int cachesUsed = 0;
 	for (int i = 0; i < endpoints.size(); i++) {
 		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
@@ -164,24 +167,24 @@ void printResult(vector<EndPoint> &endpoints) {
 			}
 		}
 	}
-	cout << "Caches Used:" << cachesUsed << "\n";
+	out << "Caches Used:" << cachesUsed << "\n";
 	for (int i = 0; i < endpoints.size(); i++) {
 		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
-			cout << "cacheID:" << endpoints.at(i).getCaches().at(c).cache->getID();
+			out << "cacheID:" << endpoints.at(i).getCaches().at(c).cache->getID();
 			for (int v = 0; v < endpoints.at(i).getCaches().at(c).cache->getVideos().size(); v++) {
-				cout << " videoID:" << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
+				out << " videoID:" << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
 			}
-			cout << "\n";
+			out << "\n";
  		}
 	}
 }
 
-vector<EndPoint> readDataSets(string nameFile) {
+void readDataSets(string nameFile, vector<EndPoint> &endPoints, vector<Cache> &caches) {
 	ifstream inFile(nameFile);
 	stringstream sstream;
 	string line;
 
-	unsigned videosNumber,
+	int videosNumber,
 		endpointsNumber,
 		requestNumber,
 		cacheNumber,
@@ -190,15 +193,13 @@ vector<EndPoint> readDataSets(string nameFile) {
 	Video newVideo;
 	vector<Video> videos;
 
-	vector<EndPoint> endPoints;
 
-	unsigned dataCenterLantency,
+	int dataCenterLantency,
 		connectCachesNumber;
 
-	vector <Cache> caches;
-	unsigned cacheID, lantencyToEP;
+	int cacheID, lantencyToEP;
 
-	unsigned videoID,
+	int videoID,
 		endPointID,
 		videoRequestNumbers;
 
@@ -226,7 +227,7 @@ vector<EndPoint> readDataSets(string nameFile) {
 			{
 				getline(inFile, line);
 				sstream << line;
-				for (unsigned i = 0; i < videosNumber; i++)
+				for (int i = 0; i < videosNumber; i++)
 				{
 					newVideo.ID = i;
 					sstream >> newVideo.size;
@@ -297,11 +298,12 @@ vector<EndPoint> readDataSets(string nameFile) {
 			inFile.close();
 		}
 	}
-	return endPoints;
 }
 int main() {
 	string filename = "videos_worth_spreading.in";
-	vector<EndPoint> endPoints = readDataSets(filename);
+	vector<EndPoint> endPoints;
+	vector<Cache> caches;
+	readDataSets(filename, endPoints,caches);
 	for (int i = 0; i < endPoints.size(); i++) {
 		endPoints.at(i).addVideosToCaches();
 	}
