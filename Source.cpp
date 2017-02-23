@@ -157,27 +157,23 @@ public:
 };
 int EndPoint::nextID = 0;
 
-void printResult(vector<EndPoint> &endpoints) {
+void printResult(vector<Cache> caches) {
 	ofstream out("a.out");
 	int cachesUsed = 0;
-	for (int i = 0; i < endpoints.size(); i++) {
-		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
-			if (endpoints.at(i).getCaches().at(c).cache->getActualSize() != endpoints.at(i).getCaches().at(c).cache->getMaxSize()) {
+		for (int c = 0; c < caches.size(); c++) {
+			if (caches.at(c).getActualSize() != caches.at(c).getMaxSize()) {
 				cachesUsed++;
 			}
 		}
-	}
 	out << cachesUsed << "\n";
-	for (int i = 0; i < endpoints.size(); i++) {
-		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
-			out << endpoints.at(i).getCaches().at(c).cache->getID();
-			for (int v = 0; v < endpoints.at(i).getCaches().at(c).cache->getVideos().size(); v++) {
-				out << " " << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
+		for (int c = 0; c < caches.size(); c++) {
+			out << caches.at(c).getID();
+			for (int v = 0; v < caches.at(c).getVideos().size(); v++) {
+				out << " " << caches.at(c).getVideos().at(v).ID;
 			}
 			out << "\n";
  		}
 	}
-}
 
 void readDataSets(string nameFile, vector<EndPoint> &endPoints, vector<Cache> &caches) {
 	ifstream inFile(nameFile);
@@ -300,14 +296,14 @@ void readDataSets(string nameFile, vector<EndPoint> &endPoints, vector<Cache> &c
 	}
 }
 int main() {
-	string filename = "me_at_the_zoo.in";
+	string filename = "kittens.in";
 	vector<EndPoint> endPoints;
 	vector<Cache> caches;
 	readDataSets(filename, endPoints,caches);
 	for (int i = 0; i < endPoints.size(); i++) {
 		endPoints.at(i).addVideosToCaches();
 	}
-	printResult(endPoints);
+	printResult(caches);
 	
 
 	return 0;
