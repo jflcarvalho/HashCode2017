@@ -49,10 +49,20 @@ public:
 	}
 };
 
+
+struct CacheAndLatency {
+	Cache *cache;
+	int latencyToEndp;
+};
+
+bool compareCaches(const Cache &cache1, const Cache &cache2) {
+	
+}
+
 class EndPoint {
 private:
 
-	std::priority_queue<Cache> caches;
+	std::priority_queue<Cache,vector<Cache>,compareCaches> caches;
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
