@@ -55,20 +55,30 @@ struct CacheAndLatency {
 	int latencyToEndp;
 };
 
-bool compareCaches(const Cache &cache1, const Cache &cache2) {
-	
-}
+class compareCaches
+{
+public:
+	bool operator() (const CacheAndLatency& lhs, const CacheAndLatency&rhs) const
+	{
+		if (lhs.latencyToEndp < rhs.latencyToEndp) {
+			return true;
+		}
+		return false;
+	}
+};
 
 class EndPoint {
 private:
 
-	std::priority_queue<Cache,vector<Cache>,compareCaches> caches;
+	std::priority_queue<CacheAndLatency,vector<CacheAndLatency>,compareCaches> caches;
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
 	EndPoint(vector<Cache> caches, int dataCenterLatency, vector<int> endPointToCachesLatency, vector<Request> requests) {
+		CacheAndLatency a;
 		for (int i = 0; i < caches.size(); i++) {
-			this->caches.push(caches.at(i));
+			a.cache = &caches.at(i);
+			a.latencyToEndp = endPointToCachesLatency.at(i);
 		}
 		this->dataCenterLatency = dataCenterLatency;
 		this->videoRequests = requests;
