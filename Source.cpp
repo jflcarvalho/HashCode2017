@@ -104,7 +104,7 @@ private:
 	static unsigned nextID;
 	static unsigned maxSize;
 	unsigned ID;
-	unsigned actulSize;
+	unsigned actualSize;
 	vector<Video> videos;
 
 public:
@@ -114,9 +114,13 @@ public:
 	}
 	void addVideo(Video video) {
 		videos.push_back(video);
+		actualSize -= video.size;
 	}
 	void removeVideo(Video video) {
 		find(videos.begin(), videos.end(), video);
+	}
+	unsigned int getActualSize() {
+		return actualSize;
 	}
 };
 
@@ -178,13 +182,26 @@ public:
 		this->videoRequests = requests;
 		sort(videoRequests.begin(), videoRequests.end(), compareRequest);
 	}
+	void addVideosToCaches() {
+		for (int k = 0; k < caches.size(); k++) {
+			while (videoRequests.size() >= 0 && caches.at(k).cache->getActualSize() > videoRequests.at(0).videoRequest.size) {
+				caches.at(k).cache->addVideo(videoRequests.at(0).videoRequest);
+				videoRequests.erase(videoRequests.begin());
+			}
+			
+		}
+		
+	}
 
 };
 
 int main() {
-	string filename = "test.ini"
+	string filename = "test.ini";
 	vector<EndPoint> endPoints = readDataSets(filename);
-
+	for (int i = 0; i < endPoints.size(); i++) {
+		endPoints.at(i).addVideosToCaches();
+	}
+	
 
 	return 0;
 }
