@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void readDataSets(string nameFile){
+void readDataSets(string nameFile) {
 	ifstream inFile(nameFile);
 	string line;
 
@@ -16,7 +16,7 @@ void readDataSets(string nameFile){
 		if (inFile.is_open())
 		{
 			while (getline(inFile, line))
-			{				
+			{
 			}
 		}
 	}
@@ -55,22 +55,24 @@ struct CacheAndLatency {
 	int latencyToEndp;
 };
 
-class compareCaches
+bool compareCaches(const CacheAndLatency& lhs, const CacheAndLatency&rhs)
 {
-public:
-	bool operator() (const CacheAndLatency& lhs, const CacheAndLatency&rhs) const
-	{
-		if (lhs.latencyToEndp < rhs.latencyToEndp) {
-			return true;
-		}
-		return false;
+	if (lhs.latencyToEndp < rhs.latencyToEndp) {
+		return true;
 	}
-};
+	return false;
+}
+
+bool compareRequest(const Request& lhs, const Request&rhs)
+{
+	return ((double)lhs.numberOfRequests / lhs.videoRequest.size < (double)rhs.numberOfRequests / rhs.videoRequest.size);
+}
+
 
 class EndPoint {
 private:
 
-	std::priority_queue<CacheAndLatency,vector<CacheAndLatency>,compareCaches> caches;
+	vector<CacheAndLatency> caches;
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
@@ -79,14 +81,19 @@ public:
 		for (int i = 0; i < caches.size(); i++) {
 			a.cache = &caches.at(i);
 			a.latencyToEndp = endPointToCachesLatency.at(i);
+			this->caches.push_back(a);
 		}
+		sort(caches.begin(), caches.end(), compareCaches);
 		this->dataCenterLatency = dataCenterLatency;
 		this->videoRequests = requests;
+		sort(videoRequests.begin(),videoRequests.end(),compareRequest)
 	}
 
 };
 
 int main() {
+
+
 
 	return 0;
 }
