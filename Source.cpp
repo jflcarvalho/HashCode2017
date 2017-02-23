@@ -167,12 +167,12 @@ void printResult(vector<EndPoint> &endpoints) {
 			}
 		}
 	}
-	out << "Caches Used:" << cachesUsed << "\n";
+	out << cachesUsed << "\n";
 	for (int i = 0; i < endpoints.size(); i++) {
 		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
-			out << "cacheID:" << endpoints.at(i).getCaches().at(c).cache->getID();
+			out << endpoints.at(i).getCaches().at(c).cache->getID();
 			for (int v = 0; v < endpoints.at(i).getCaches().at(c).cache->getVideos().size(); v++) {
-				out << " videoID:" << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
+				out << " " << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
 			}
 			out << "\n";
  		}
