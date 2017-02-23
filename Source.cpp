@@ -112,6 +112,10 @@ public:
 		this->ID = nextID;
 		nextID++;
 	}
+	int getID() {
+		return ID;
+	}
+	vector<Video> getVideos();
 	void addVideo(Video video) {
 		videos.push_back(video);
 		actualSize -= video.size;
@@ -121,6 +125,9 @@ public:
 	}
 	unsigned int getActualSize() {
 		return actualSize;
+	}
+	unsigned int getMaxSize() {
+		return maxSize;
 	}
 };
 
@@ -151,7 +158,11 @@ private:
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
-	EndPoint();
+	EndPoint() {};
+	vector<CacheAndLatency> getCaches() {
+		return caches;
+	}
+
 	void setCaches(vector<Cache> caches, vector<int> endPointToCachesLatency) {
 		CacheAndLatency a;
 		for (int i = 0; i < caches.size(); i++) {
@@ -195,12 +206,35 @@ public:
 
 };
 
+
+void printResult(vector<EndPoint> &endpoints) {
+	int cachesUsed = 0;
+	for (int i = 0; i < endpoints.size(); i++) {
+		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
+			if (endpoints.at(i).getCaches().at(c).cache->getActualSize() != endpoints.at(i).getCaches().at(c).cache->getMaxSize()) {
+				cachesUsed++;
+			}
+		}
+	}
+	for (int i = 0; i < endpoints.size(); i++) {
+		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
+			cout << endpoints.at(i).getCaches().at(c).cache->getID();
+			for (int v = 0; v < endpoints.at(i).getCaches().at(c).cache->getVideos().size(); v++) {
+				cout << " " << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
+			}
+			cout << "\n";
+ 		}
+	}
+}
+
+
 int main() {
-	string filename = "test.ini";
+	string filename = "kittens.in";
 	vector<EndPoint> endPoints = readDataSets(filename);
 	for (int i = 0; i < endPoints.size(); i++) {
 		endPoints.at(i).addVideosToCaches();
 	}
+	printResult(endPoints);
 	
 
 	return 0;
