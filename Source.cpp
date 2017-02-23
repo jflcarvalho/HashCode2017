@@ -3,21 +3,75 @@
 #include <string>
 #include <vector>
 #include <queue>
-
+#include <algorithm>
+#include <sstream>
 
 using namespace std;
 
 void readDataSets(string nameFile) {
 	ifstream inFile(nameFile);
+	stringstream sstream;
 	string line;
+
+	unsigned videosNumber,
+		endpointsNumber,
+		requestNumber,
+		cacheNumber,
+		cacheSize;
+
+	Video newVideo;
+	vector<Video> videos;
+
+	EndPoint newEndPoint;
+	vector<EndPoint> endPoints;
+
+	unsigned dataCenterLantency,
+		connectCachesNumber;
+
+	vector <Cache> caches;
+
 
 	for (int i = 0; i < 3; i++)
 	{
 		if (inFile.is_open())
 		{
 			while (getline(inFile, line))
-			{
+			{				
 			}
+			sstream.clear();
+			line.clear();
+			if (videosNumber != 0)
+			{
+				getline(inFile, line);
+				sstream << line;
+				for (unsigned i = 0; i < videosNumber; i++)
+				{
+					newVideo.ID = i;
+					sstream >> newVideo.size;
+					videos.push_back(newVideo);
+				}
+				sstream.clear();
+				line.clear();
+			}
+			if (endpointsNumber != 0)
+			{
+				for (int i = 0; i < endpointsNumber; i++)
+				{
+					getline(inFile, line);
+					sstream << line;
+					sstream >> dataCenterLantency;
+					sstream >> connectCachesNumber;
+					newEndPoint.setDataCenterLatency(dataCenterLantency);
+					sstream.clear();
+					line.clear();
+					for (int j = 0; j < connectCachesNumber; j++)
+					{
+						Cache newCache(cacheSize);
+					}
+				}
+
+			}
+
 		}
 	}
 
@@ -35,17 +89,27 @@ struct Request
 	unsigned numberOfRequests;
 };
 
+unsigned Cache::nextID = 0;
+
 class Cache
 {
 private:
+	static unsigned nextID;
+	static unsigned maxSize;
 	unsigned ID;
-	unsigned maxSize;
+	unsigned actulSize;
 	vector<Video> videos;
 
 public:
-	Cache(unsigned ID, unsigned maxSize) {
-		this->ID = ID;
-		this->maxSize = maxSize;
+	Cache(unsigned maxSize) {
+		this->ID = nextID;
+		nextID++;
+	}
+	void addVideo(Video video) {
+		videos.push_back(video);
+	}
+	void removeVideo(Video video) {
+		find(videos.begin(), videos.end(), video);
 	}
 };
 
@@ -55,12 +119,8 @@ struct CacheAndLatency {
 	int latencyToEndp;
 };
 
-bool compareCaches(const CacheAndLatency& lhs, const CacheAndLatency&rhs)
-{
-	if (lhs.latencyToEndp < rhs.latencyToEndp) {
-		return true;
-	}
-	return false;
+bool compareCaches(const Cache &cache1, const Cache &cache2) {
+	
 }
 
 bool compareRequest(const Request& lhs, const Request&rhs)
@@ -72,7 +132,7 @@ bool compareRequest(const Request& lhs, const Request&rhs)
 class EndPoint {
 private:
 
-	vector<CacheAndLatency> caches;
+	std::priority_queue<Cache,vector<Cache>,compareCaches> caches;
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
@@ -96,11 +156,8 @@ public:
 
 
 	EndPoint(vector<Cache> caches, int dataCenterLatency, vector<int> endPointToCachesLatency, vector<Request> requests) {
-		CacheAndLatency a;
 		for (int i = 0; i < caches.size(); i++) {
-			a.cache = &caches.at(i);
-			a.latencyToEndp = endPointToCachesLatency.at(i);
-			this->caches.push_back(a);
+			this->caches.push(caches.at(i));
 		}
 		sort(caches.begin(), caches.end(), compareCaches);
 		this->dataCenterLatency = dataCenterLatency;
@@ -110,9 +167,35 @@ public:
 
 };
 
+
 int main() {
-
-
+	vector<EndPoint> endPoints;
 
 	return 0;
 }
+
+			getline(inFile, line);
+			sstream << line;
+			sstream >> videosNumber;
+			sstream >> endpointsNumber;
+			sstream >> requestNumber;
+			sstream >> cacheNumber;
+			sstream >> cacheSize;
+			for (int i = 0; i < cacheNumber; i++)
+			{
+				Cache newCache(cacheSize);
+				caches.push_back(newCache);
+bool compareCaches(const CacheAndLatency& lhs, const CacheAndLatency&rhs)
+{
+	if (lhs.latencyToEndp < rhs.latencyToEndp) {
+		return true;
+	}
+	return false;
+	vector<CacheAndLatency> caches;
+	int dataCenterLatency;
+		CacheAndLatency a;
+		for (int i = 0; i < caches.size(); i++) {
+			a.cache = &caches.at(i);
+			a.latencyToEndp = endPointToCachesLatency.at(i);
+			this->caches.push_back(a);
+
