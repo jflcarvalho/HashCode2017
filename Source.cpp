@@ -182,7 +182,8 @@ public:
 };
 
 int main() {
-
+	string filename = "test.ini"
+	vector<EndPoint> endPoints = readDataSets(filename);
 
 
 	return 0;
