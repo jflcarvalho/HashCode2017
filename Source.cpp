@@ -40,7 +40,6 @@ class Cache
 private:
 	unsigned ID;
 	unsigned maxSize;
-	unsigned availableSize;
 	vector<Video> videos;
 
 public:
@@ -77,8 +76,7 @@ private:
 	int dataCenterLatency;
 	vector<Request> videoRequests;
 public:
-	EndPoint() {
-	};
+	EndPoint();
 	void setCaches(vector<Cache> caches, vector<int> endPointToCachesLatency) {
 		CacheAndLatency a;
 		for (int i = 0; i < caches.size(); i++) {
@@ -113,7 +111,6 @@ public:
 };
 
 int main() {
-	vector<EndPoint> endPoints = readDataSets;
 
 
 
