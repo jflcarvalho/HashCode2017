@@ -54,8 +54,15 @@ private:
 
 	std::priority_queue<Cache> caches;
 	int dataCenterLatency;
+	vector<Request> videoRequests;
 public:
-	EndPoint(vector<Cache> caches, int dataCenterLatency, vector<int> endPointToCachesLatency, vector<Request> requests);
+	EndPoint(vector<Cache> caches, int dataCenterLatency, vector<int> endPointToCachesLatency, vector<Request> requests) {
+		for (int i = 0; i < caches.size(); i++) {
+			this->caches.push(caches.at(i));
+		}
+		this->dataCenterLatency = dataCenterLatency;
+		this->videoRequests = requests;
+	}
 
 };
 
