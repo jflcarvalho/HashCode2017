@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
+
 
 using namespace std;
 
@@ -49,7 +51,11 @@ public:
 
 class EndPoint {
 private:
+
+	std::priority_queue<Cache> caches;
+	int dataCenterLatency;
 public:
+	EndPoint(vector<Cache> caches, int dataCenterLatency, vector<int> endPointToCachesLatency, vector<Request> requests);
 
 };
 
