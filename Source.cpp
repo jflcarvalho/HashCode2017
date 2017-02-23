@@ -153,7 +153,7 @@ private:
 	static unsigned nextID;
 	static unsigned maxSize;
 	unsigned ID;
-	unsigned actulSize;
+	unsigned actualSize;
 	vector<Video> videos;
 
 public:
@@ -161,17 +161,23 @@ public:
 		this->ID = nextID;
 		nextID++;
 	}
-
-	unsigned getID() {
+	int getID() {
 		return ID;
 	}
-
+	vector<Video> getVideos();
 	void addVideo(Video video) {
 		videos.push_back(video);
+		actualSize -= video.size;
 	}
 
 	void removeVideo(Video video) {
 		find(videos.begin(), videos.end(), video);
+	}
+	unsigned int getActualSize() {
+		return actualSize;
+	}
+	unsigned int getMaxSize() {
+		return maxSize;
 	}
 };
 
@@ -208,6 +214,10 @@ public:
 		this->ID = nextID;
 		nextID++;
 	}
+	vector<CacheAndLatency> getCaches() {
+		return caches;
+	}
+
 	void setCaches(vector<Cache> caches, vector<int> endPointToCachesLatency) {
 		CacheAndLatency a;
 		for (int i = 0; i < caches.size(); i++) {
@@ -253,12 +263,49 @@ public:
 		this->videoRequests = requests;
 		sort(videoRequests.begin(), videoRequests.end(), compareRequest);
 	}
+	void addVideosToCaches() {
+		for (int k = 0; k < caches.size(); k++) {
+			while (videoRequests.size() >= 0 && caches.at(k).cache->getActualSize() > videoRequests.at(0).videoRequest.size) {
+				caches.at(k).cache->addVideo(videoRequests.at(0).videoRequest);
+				videoRequests.erase(videoRequests.begin());
+			}
+			
+		}
+		
+	}
 
 };
 
+
+void printResult(vector<EndPoint> &endpoints) {
+	int cachesUsed = 0;
+	for (int i = 0; i < endpoints.size(); i++) {
+		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
+			if (endpoints.at(i).getCaches().at(c).cache->getActualSize() != endpoints.at(i).getCaches().at(c).cache->getMaxSize()) {
+				cachesUsed++;
+			}
+		}
+	}
+	for (int i = 0; i < endpoints.size(); i++) {
+		for (int c = 0; c < endpoints.at(i).getCaches().size(); c++) {
+			cout << endpoints.at(i).getCaches().at(c).cache->getID();
+			for (int v = 0; v < endpoints.at(i).getCaches().at(c).cache->getVideos().size(); v++) {
+				cout << " " << endpoints.at(i).getCaches().at(c).cache->getVideos().at(v).ID;
+			}
+			cout << "\n";
+ 		}
+	}
+}
+
+
 int main() {
-
-
+	string filename = "kittens.in";
+	vector<EndPoint> endPoints = readDataSets(filename);
+	for (int i = 0; i < endPoints.size(); i++) {
+		endPoints.at(i).addVideosToCaches();
+	}
+	printResult(endPoints);
+	
 
 	return 0;
 }
